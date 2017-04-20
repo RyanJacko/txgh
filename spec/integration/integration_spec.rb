@@ -36,6 +36,11 @@ describe 'integration tests', integration: true do
     File.read(payload_path.join('github_postbody_l10n.json'))
   end
 
+  let(:github_postbody_nocommit) do
+    File.read(payload_path.join('github_postbody_nocommit.json'))
+  end
+
+
   let(:project_name) { 'test-project-88' }
   let(:repo_name) { 'txgh-bot/txgh-test-resources' }
 
@@ -103,4 +108,14 @@ describe 'integration tests', integration: true do
       expect(last_response).to be_ok
     end
   end
+
+  it 'verifies the github nocommit hook endpoint works' do
+    VCR.use_cassette('github_nocommit_hook_endpoint') do
+      sign_github_request(github_postbody_nocommit)
+      header 'content-type', 'application/x-www-form-urlencoded'
+      post '/github', github_postbody_nocommit
+      expect(last_response).to be_ok
+    end
+  end
+
 end
